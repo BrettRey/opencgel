@@ -1,0 +1,213 @@
+\documentclass[10pt,twoside]{article}     % custom stock, so drop ‘letterpaper’
+
+%— BASIC FONT & ENCODING —
+\usepackage{fontspec}
+\usepackage{setspace} 
+\setmainfont{CMU Serif}[
+  Numbers = OldStyle]
+\setsansfont[Scale=MatchLowercase]{Fira Sans}[Numbers=OldStyle]
+
+\usepackage{microtype}
+\usepackage{tikz}
+\usepackage{pdfpages}
+
+%--- BODY SIZE & LEADING ---
+\newcommand{\BodySize}{9}    % pt  (glyphs)
+\newcommand{\BodyLead}{13}   % pt  (baseline skip)
+
+
+\makeatletter
+\renewcommand\normalsize{%
+  \fontsize{\BodySize pt}{\BodyLead pt}\selectfont
+}
+\makeatother
+
+%— PAGE SIZE & MARGINS —
+\usepackage[
+  paperwidth  = 7.08in,
+  paperheight = 9.84in,
+  inner       = 3cm,   % left on odd, right on even
+  outer       = 3cm,   % right on odd, left on even
+  top         = 0.47in,
+  bottom      = 0.35in,
+  headheight  = 17pt,     % room for running head
+  headsep     = 12pt,
+  footskip    = 20pt,
+  includehead,
+  includefoot
+]{geometry}
+
+%— PACKAGES AS BEFORE —
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,graphicx,enumitem,array,setspace,xcolor}
+\usepackage[linguistics]{forest}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=cgelblue,
+  filecolor=magenta,
+  urlcolor=cyan,
+  unicode=false,
+  psdextra,
+}
+\pdfstringdefDisableCommands{%
+  \def\hskip#1{}%
+  \def\quad{}%
+  \def\hspace#1{}%
+}
+
+\usepackage[normalem]{ulem}
+% --- Change the underline thickness here ---
+\renewcommand{\ULthickness}{0.01pt}
+\renewcommand{\ULdepth}{1.5pt}
+
+%— CGEL COLOURS —
+\definecolor{cgelblue}{RGB}{32,147,220}
+\definecolor{lightblue}{RGB}{148,199,240}
+
+%--- EXTRA-BOLD SANS FOR HEADINGS ---------------------------------
+\newfontfamily\HeadSans{Source Sans Pro Black}[Scale=MatchLowercase] % “Black” = heaviest
+
+%--- SECTION HEADING FORMAT (number hangs 1 em into left margin) --
+\titleformat{\section}[hang]%
+  {\HeadSans\fontsize{14}{13.5}\selectfont\color{cgelblue}}% title
+  {\makebox[0pt][r]{\sffamily\color{cgelblue}\thesection\hspace{0.5em}}}% label
+  {0pt}% separation between label box and title
+  {}%
+  [\setcounter{exno}{0}]
+\titlespacing*{\section}{0pt}{0.5ex}{0.3ex}
+
+
+%--- SUBSECTION: light-blue square + regular sans title -------------
+\newcommand{\cgelsubsection}[1]{%
+  \par\addvspace{1ex}% space above
+  \noindent
+  \llap{\color{cgelblue!30}\rule{6pt}{6pt}\hspace{0.5em}}% square in margin
+  {\sffamily\fontsize{12}{13}\selectfont\color{cgelblue}#1}\par
+  \addvspace{0.6ex}\noindent
+}
+
+%--- SUBSUBSECTION: bold, blue, sans-serif title ---
+\newcommand{\cgelsubsubsection}[1]{%
+  \par\addvspace{1ex}% Adds vertical space before the heading
+  \noindent % Prevents indentation of the heading
+  {\selectfont\color{cgelblue}#1}\par% Formats the title
+  \nopagebreak % Discourages a page break after the heading
+  \addvspace{0.5ex}% Adds a small space after the heading
+}
+
+% Remove footnote rule (horizontal line)
+\renewcommand{\footnoterule}{}
+
+% Custom footnote formatting - truly no indent
+\makeatletter
+\renewcommand{\@makefntext}[1]{%
+  \parindent 0pt%
+  \noindent
+  \@makefnmark\space%
+  \fontsize{7pt}{9pt}\selectfont #1%
+}
+\makeatother
+
+
+\newcommand{\cgelsection}[1]{\vspace{.8cm}\section{#1}\vspace{.5cm}}
+
+% Customize section marks for running headers
+\renewcommand{\sectionmark}[1]{%
+  \markright{#1}%
+}
+
+%— PAGE STYLE —
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[RO,LE]{\sffamily\thepage}
+\fancyhead[LO]{\sffamily\color{cgelblue}Chapter 2 \HeadSans\color{cgelblue}Syntactic overview}
+\fancyhead[RE]{\HeadSans\color{cgelblue}\rightmark}
+\setlength{\headheight}{17pt}
+
+%— TITLE & FRONT-MATTER HELPERS —
+\newcommand{\grammartitle}[1]{\begin{center}{\addfontfeatures{LetterSpace = -2.5}\Huge#1}\end{center}}
+\newcommand{\grammarauthor}[1]{\vspace{3em}\normalsize\textsc{#1}}
+\newcommand{\chapternumber}[1]{\color{cgelblue}\Large\textbf{#1}}
+
+%— UPRIGHT DELIMITERS INSIDE ITALIC EXAMPLES —
+\newcommand{\ob}{\textnormal{[}}
+\newcommand{\cb}{\textnormal{]}}
+\newcommand{\op}{\textnormal{(}}
+\newcommand{\cp}{\textnormal{)}}
+
+%%% TREE COMMANDS
+\newfontfamily\LightSans{Fira Sans Light}[Scale=MatchLowercase]
+\newcommand{\Node}[2]{\LightSans{#1:}\\{#2}}
+% For commonly used functions this is defined with \(function)
+\newcommand{\Head}[1]{\Node{Head}{#1}}
+\newcommand{\Subj}[1]{\Node{Subj}{#1}}
+\newcommand{\Comp}[1]{\Node{Comp}{#1}}
+\newcommand{\Mod}[1]{\Node{Mod}{#1}}
+\newcommand{\Det}[1]{\Node{Det}{#1}}
+\newcommand{\PredComp}[1]{\Node{PredComp}{#1}}
+\newcommand{\Crd}[1]{\Node{Coordinate}{#1}}
+\newcommand{\Mk}[1]{\Node{Marker}{#1}}
+\newcommand{\Obj}[1]{\Node{Obj}{#1}}
+\newcommand{\Sup}[1]{\Node{Supplement}{#1}}
+
+
+%— UNGRAMMATICAL MARK —
+\newcommand{\ungram}{\llap{\footnotesize{*}}}
+
+% --- EXAMPLE LISTS ------------------------------------------------
+\newcounter{exno}
+\newlist{examples}{enumerate}{3}
+
+% [n] top-level examples
+\setlist[examples,1]{
+  before      = {\medskip\stepcounter{exno}},
+  after       = {\medskip},
+  label       = [\theexno],
+  ref         = \theexno,  % produces 1, 2, etc.
+  labelsep    = 0.5em,
+  labelindent = 0pt,
+  leftmargin  = 14pt,
+  nosep
+}
+
+% second-level: ref shows only roman numeral
+\setlist[examples,2]{
+  before       = {\itshape},
+  label        = \textup{\roman*},
+  ref          = \roman*,  % produces i, ii, iii, etc.
+  labelsep     = 0.5em,
+  labelindent  = 0pt,
+  leftmargin   = 1.5em,
+  itemindent   = 0pt,
+  nosep,
+  align        = right
+}
+
+% third-level: ref shows only letter
+\setlist[examples,3]{
+  before   = {\itshape},
+  label    = \textup{\alph*.},
+  ref      = \alph*.,  % produces a., b., etc.
+  labelsep = 0.2em,
+  nosep
+}
+
+% Add titletoc package for custom TOC formatting
+\usepackage{titletoc}
+
+\begin{document}
+\includepdf[pages=1,pagecommand={%
+  \thispagestyle{empty}%
+  \begin{tikzpicture}[remember picture,overlay]
+  \node[xshift=3.7cm,anchor=center,color=lightblue,font=\Huge\bfseries]
+      at (current page.center) {Open edition};
+  \end{tikzpicture}%
+}]{CGELcover.pdf}
+
+\include{02 Overview}
+
+
+
+\end{document}
